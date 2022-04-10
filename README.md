@@ -8,6 +8,8 @@
 
 [BeerChang](https://github.com/BeerChang)
 
+//Hello from BeerChang!
+
 ## License
 
 MIT license.

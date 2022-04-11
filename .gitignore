@@ -18,3 +18,5 @@
 
 #Others
 *.pdf
+.venv/
+twophase/

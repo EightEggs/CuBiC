@@ -18,6 +18,6 @@
 
 #Others
 *.pdf
-.idea
+.idea/*
 .venv/
 twophase/

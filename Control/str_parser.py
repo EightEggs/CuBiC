@@ -24,7 +24,6 @@ def solvestring_parser(solvestring: str, including_count: bool = False) -> dict:
     solvedict = solvestring.split()
     if including_count:
         solvedict[-1] = solvedict[-1][1:3]
-        pass
     else:
         solvedict.pop()
     return solvedict

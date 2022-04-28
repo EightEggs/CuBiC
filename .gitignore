@@ -16,8 +16,14 @@
 *.ppt
 *.pptx
 
-#Others
+# Picturs & Videos
+*.png
+*.jpg
+*.mp4
+
+# Others
 *.pdf
 .idea/
 .venv/
+.vscode/
 twophase/

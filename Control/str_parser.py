@@ -16,14 +16,14 @@ def valid_cubestring(cubestring: str) -> bool:
     return False
 
 
-def solvestring_parser(solvestring: str, including_count: bool = False) -> dict[str]:
+def solvestring_parser(solvestring: str, including_count: bool = False) -> dict:
     '''parse the solvestring to a dict containing each solution step.
     :param solvestring: the solvestring to parse.
     :param including_count: set to True if you want to show the step counts.
     '''
     solvedict = solvestring.split()
     if including_count:
-        # TODO: transform solvedict[-1] to a int.
+        solvedict[-1] = solvedict[-1][1:3]
         pass
     else:
         solvedict.pop()

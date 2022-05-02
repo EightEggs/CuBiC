@@ -1,15 +1,25 @@
 import os
 
-os.system('fswebcam -d /dev/video0 --no-banner\
-            -q /home/pi/Documents/CuBiC/Vision/1.jpg')
 
-os.system('fswebcam -d /dev/video2 --no-banner\
-            -q /home/pi/Documents/CuBiC/Vision/2.jpg')
+def capture_one(cam_id: int):
+    '''Capture one image using the specified camera. 
+    Save to /home/pi/Documents/CuBiC/Vision/
+    :param cam_id: Camera id. Can be only 0, 1, 2, or 3.
+    '''
+    if cam_id in [0, 1, 2, 3]:
+        os.system(f'fswebcam -d /dev/video{cam_id*2} --no-banner\
+            -q /home/pi/Documents/CuBiC/Vision/{cam_id}.jpg')
+        print(f'Camera {cam_id} capture done.')
+    else:
+        print(f'Invalid Camera {cam_id}.')
 
-os.system('fswebcam -d /dev/video4 --no-banner\
-            -q /home/pi/Documents/CuBiC/Vision/3.jpg')
 
-os.system('fswebcam -d /dev/video6 --no-banner\
-            -q /home/pi/Documents/CuBiC/Vision/4.jpg')
+def capture_all():
+    '''Capture all the 4 images. Save to /home/pi/Documents/CuBiC/Vision/
+    '''
+    for cam_id in range(4):
+        capture_one(cam_id)
 
-print('capture done.')
+
+if __name__ == '__main__':
+    capture_all()

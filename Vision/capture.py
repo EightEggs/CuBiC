@@ -11,7 +11,7 @@ def capture_one(cam_id: int):
             -q /home/pi/Documents/CuBiC/Vision/{cam_id}.jpg')
         print(f'Camera {cam_id} capture done.')
     else:
-        print(f'Invalid Camera {cam_id}.')
+        raise ValueError(f'Invalid Camera {cam_id}.')
 
 
 def capture_all():

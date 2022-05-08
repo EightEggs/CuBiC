@@ -11,6 +11,7 @@ def valid_cubestring(cubestring: str) -> bool:
     sfc = fc.from_string(cubestring)
     cc = fc.to_cubie_cube()
     scc = cc.verify()
+    # TODO: indicate where the fault is.
     if sfc == cubie.CUBE_OK and scc == cubie.CUBE_OK:
         return True
     return False
@@ -33,7 +34,8 @@ if __name__ == "__main__":
 
     cubestring = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
     if valid_cubestring(cubestring):
-        res = sv.solve(cubestring, 19, 1)
+        res = sv.solve(cubestring, 30, 1)
 
     print(valid_cubestring(cubestring))
     print(solvestring_parser(res, True))
+

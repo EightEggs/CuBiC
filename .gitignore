@@ -21,6 +21,11 @@
 *.jpg
 *.mp4
 
+# Models
+*.dwg
+*.sldprt
+*.stl
+
 # Others
 *.pdf
 .idea/

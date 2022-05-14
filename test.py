@@ -1,7 +1,13 @@
-from Processing import str_parser
-from Control import stp_control
-from Vision import capture
+import pigpio
 
-print(str_parser.__name__)
-print(stp_control.__name__)
-print(capture.__name__)
+GPIO=4
+
+pi = pigpio.pi()
+if not pi.connected:
+   exit()
+
+level = pi.read(GPIO)
+
+print("GPIO {} is {}".format(GPIO, level))
+
+pi.stop()

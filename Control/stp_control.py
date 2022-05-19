@@ -1,4 +1,15 @@
 from enum import Enum, unique
+import pigpio
+
+pi = pigpio.pi()
+if not pi.connected:
+    pass
+    # exit("pigpiod is not connected")
+
+HandL_GPIO = 1
+HandR_GPIO = 2
+MagnetL_GPIO = 3
+MagnetR_GPIO = 4
 
 
 @unique

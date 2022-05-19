@@ -1,13 +1,9 @@
-import pigpio
+from Processing import str_parser as sp
+import twophase.solver as sv
 
-GPIO=4
-
-pi = pigpio.pi()
-if not pi.connected:
-   exit()
-
-level = pi.read(GPIO)
-
-print("GPIO {} is {}".format(GPIO, level))
-
-pi.stop()
+cubestring = 'UUFFUUBRLDRUFRULLFUDBBFLRDDDLFBDURDRBRLBLLDDFLFRBBRUFB'
+res = sv.solve(cubestring, 20, 0.2)
+solvestring = sp.solvestring_parser(res, True)
+print(solvestring)
+opstring = sp.to_opstring(solvestring, True)
+print(opstring)

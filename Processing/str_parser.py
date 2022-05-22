@@ -1,4 +1,3 @@
-from os import stat
 import twophase.solver as sv
 import twophase.face as face
 import twophase.cubie as cubie

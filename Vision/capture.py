@@ -2,7 +2,7 @@ import os
 
 
 def capture_one(cam_id: int):
-    '''Capture one image using the specified camera. 
+    '''Capture one image using the specified camera.
     Save to /home/pi/Documents/CuBiC/Vision/
     :param cam_id: Camera id. Can be only 0, 1, 2, or 3.
     '''

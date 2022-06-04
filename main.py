@@ -4,8 +4,10 @@ import Processing.str_parser as sp
 import Control.stp_control as sc
 
 
-def main(lhand, rhand, opstring):
-    pass
+def main(lhand, rhand, oplist):
+    for i in range(len(oplist)):
+        if oplist[i] == 'L1':
+            pass
 
 
 if __name__ == '__main__':
@@ -15,10 +17,10 @@ if __name__ == '__main__':
     if sp.valid_cubestring(cubestring):
         solvestring = sp.sv.solve(cubestring)
         solvelist = sp.solvestring_parser(solvestring)
-        opstring = sp.to_opstring(solvelist)
-        print(opstring)
+        oplist = sp.to_oplist(solvelist)
+        print(oplist)
 
     lhand = sc.Hand('left')
     rhand = sc.Hand('right')
 
-    main(lhand, rhand, opstring)
+    main(lhand, rhand, oplist)

@@ -21,8 +21,10 @@ x13, y13 = 5, 6
 x14, y14 = 5, 6
 x15, y15 = 5, 6
 x16, y16 = 5, 6
-X = [x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16]  # 存储左上角坐标x值的矩阵
-Y = [y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16]  # 存储左上角坐标y值的矩阵
+X = [x1, x2, x3, x4, x5, x6, x7, x8, x9, x10,
+     x11, x12, x13, x14, x15, x16]  # 存储左上角坐标x值的矩阵
+Y = [y1, y2, y3, y4, y5, y6, y7, y8, y9, y10,
+     y11, y12, y13, y14, y15, y16]  # 存储左上角坐标y值的矩阵
 
 
 def cv2_show(name, a) -> None:
@@ -34,7 +36,7 @@ def cv2_show(name, a) -> None:
 
 def roi_extract(img) -> list:
     roi_s = []  # 用于储存提取的roi
-    for x, y in X, Y:
+    for x, y in zip(X, Y):
         if x != 0 and y != 0:
             roi = img[y:y+h, x:x+w]
             roi_s.append(roi)

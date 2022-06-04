@@ -1,7 +1,6 @@
 import numpy as np
 import os
 import joblib
-import matplotlib.pyplot as plt
 import cv2
 from roi_extract import roi_extract
 # svm颜色识别(一张图片)

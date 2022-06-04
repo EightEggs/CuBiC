@@ -17,21 +17,21 @@ def valid_cubestring(cubestring: str) -> bool:
     return False
 
 
-def solvestring_parser(solvestring: str, including_count: bool = False) -> dict:
+def solvestring_parser(solvestring: str, including_count: bool = False) -> list:
     '''parse the solvestring to a dict containing each solution step.
     :param solvestring: the solvestring to parse.
     :param including_count: set to True if you want to show the step counts.
     '''
-    solvedict = solvestring.split()
+    solvelist = solvestring.split()
     if including_count:
-        solvedict[-1] = solvedict[-1][1:3]
+        solvelist[-1] = solvelist[-1][1:3]
     else:
-        solvedict.pop()
-    return solvedict
+        solvelist.pop()
+    return solvelist
 
 
-def to_opstring(solvestring: dict, including_count: bool = False) -> dict:
-    '''generate the operation string dict from the solvestring dict.
+def to_opstring(solvestring: list, including_count: bool = False) -> list:
+    '''generate the operation string dict from the solvestring list.
     :param solvestring: the solvestring dict to parse.
     '''
     # 定义初始方位，左手为L，右手为F

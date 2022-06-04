@@ -1,15 +1,23 @@
 from enum import Enum, unique
+import time
 import pigpio
 
-pi = pigpio.pi()
-if not pi.connected:
-    pass
-    # exit("pigpiod is not connected")
 
-HandL_GPIO = 1
-HandR_GPIO = 2
-MagnetL_GPIO = 3
-MagnetR_GPIO = 4
+# pigpio uses BCM encoding.
+HandL_ENA = 4
+HandL_DIR = 27
+HandL_PUL = 17
+
+HandR_ENA = 18
+HandR_DIR = 23
+HandR_PUL = 24
+
+MagnetL_GPIO = 5
+MagnetR_GPIO = 6
+
+NUM_OF_STEPS_FOR_360 = 1000
+PWM_FREQ = 2500  # Hz
+DELAY = int(500000/PWM_FREQ)  # microseconds
 
 
 @unique
@@ -30,11 +38,33 @@ class HandStatus(Enum):
 class Hand:
     '''Hand class
     '''
+    # constrain the attributes
+    __slots__ = ('status', 'side', 'pi', 'wave', 'wave_id')
 
-    def __init__(self):
-        self.status = HandStatus.DeftHld
+    def __init__(self, side: str, status: HandStatus = HandStatus.DeftRel):
+        if isinstance(status, HandStatus) and side in ('left', 'right'):
+            self.status = status
+            self.side = side
 
-    def _value2key(self, value: int) -> HandStatus:
+            self.pi = pigpio.pi()
+            if not self.pi.connected:
+                raise RuntimeError("Connect to pigpio failed!")
+            self.pi.wave_clear()
+            self.pi.write(HandL_ENA, 0)
+            self.wave = [pigpio.pulse(1 << (HandL_PUL if side ==
+                                      'left' else HandR_PUL), 0, DELAY),
+                         pigpio.pulse(0, 1 << (HandL_PUL if side ==
+                                      'left' else HandR_PUL), DELAY)]
+            self.pi.wave_add_generic(self.wave)
+            self.wave_id = self.pi.wave_create()
+            if self.wave_id >= 0:
+                print(f"Wave {self.wave_id} created successfully.")
+
+        else:
+            raise ValueError("Unknown param(s).")
+
+    @staticmethod
+    def _value2key(value: int) -> HandStatus:
         '''Get the HandStatus name via value.
         :param value: value of the HandStatus
         '''
@@ -47,14 +77,44 @@ class Hand:
         :param status: name of the HandStatus:
         DeftHld | LeftHld | LeftRel | BackHld | BackRel | RighHld | RighRel
         '''
-        if status in HandStatus:
+        if isinstance(status, HandStatus):
             self.status = status
         else:
             raise ValueError(f"Invalid status {status}")
 
+    def _send_pulse(self, num_of_pulse: int):
+        '''Send the pulse to the hand.
+        :param num_of_pulses: number of pulses to send
+        '''
+        x = num_of_pulse & 255
+        y = num_of_pulse >> 8
+        # loop x + y*256 times
+        chain = [255, 0, self.wave_id, 255, 1, x, y]
+        # infinite loop (for test):
+        # chain = [255, 0, self.wave_id, 255, 3]
+        while self.pi.wave_tx_busy():
+            time.sleep(0.1)
+        self.pi.wave_chain(chain)
+
+    def _move(self, angle: int, direct: int):
+        '''Move the specified angle.
+        :param angle: angle to move to
+        :param direct: direction to move, 0 == left, 1 == right
+        '''
+        num_of_pulse = int(angle * NUM_OF_STEPS_FOR_360/360)
+        if 0 < angle < 360 and direct in (0, 1):
+            self.pi.write(HandL_DIR if self.side ==
+                          "left" else HandR_DIR, direct)
+            self._send_pulse(num_of_pulse)
+        else:
+            raise ValueError(f"Invalid angle {angle} or direction {direct}!")
+
     def Hold(self):
         if self.status.value in [1, 3, 5, 7]:
-            self.status = self._value2key(self.status.value - 1)
+            self.status = Hand._value2key(self.status.value - 1)
+            self.pi.write(MagnetL_GPIO if self.side ==
+                          'left' else MagnetR_GPIO, 0)
+            return self
         else:
             raise ValueError(
                 f"{self.status} already holds.")
@@ -62,26 +122,39 @@ class Hand:
     def Release(self):
         if self.status.value in [0, 2, 4, 6]:
             self.status = self._value2key(self.status.value + 1)
+            self.pi.write(MagnetL_GPIO if self.side ==
+                          'left' else MagnetR_GPIO, 1)
+            return self
         else:
             raise ValueError(
                 f"{self.status} already released.")
 
     def TurnL90(self):
-        pass
+        v = [2, 3, 4, 5, 6, 7, 0, 1][self.status.value]
+        self.status = Hand._value2key(v)
+        self._move(90, 1)
+        return self
 
     def TurnR90(self):
-        pass
+        v = [6, 7, 0, 1, 2, 3, 4, 5][self.status.value]
+        self.status = Hand._value2key(v)
+        self._move(90, 0)
+        return self
 
     def Turn180(self):
-        pass
+        v = [4, 5, 6, 7, 0, 1, 2, 3][self.status.value]
+        self.status = Hand._value2key(v)
+        self._move(180, 0) if self.status.value % 2 else self._move(180, 1)
+        return self
+
+    def __del__(self):
+        self.pi = pigpio.pi()
+        self.pi.wave_tx_stop()
+        self.pi.wave_clear()
+        self.pi.stop()
 
 
 if __name__ == '__main__':
-    lm = Hand()
-    print(lm.status)
-    lm.set_status(HandStatus.RighRel)
-    print(lm.status)
-    lm.Hold()
-    print(lm.status)
-    lm.Release()
-    print(lm.status)
+    lhand = Hand(side='left')
+    rhand = Hand(side='right')
+    print(lhand.status, rhand.status)

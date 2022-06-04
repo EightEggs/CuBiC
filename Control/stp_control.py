@@ -4,20 +4,20 @@ import pigpio
 
 
 # pigpio uses BCM encoding.
-HandL_ENA = 1
-HandL_DIR = 3
-HandL_PUL = 5
+HandL_ENA = 4
+HandL_DIR = 27
+HandL_PUL = 17
 
-HandR_ENA = 2
-HandR_DIR = 4
-HandR_PUL = 6
+HandR_ENA = 18
+HandR_DIR = 23
+HandR_PUL = 24
 
-MagnetL_GPIO = 7
-MagnetR_GPIO = 8
+MagnetL_GPIO = 5
+MagnetR_GPIO = 6
 
-NUM_OF_STEPS_FOR_360 = 2000
-PWM_FREQ = 5000  # Hz
-DELAY = 500000/PWM_FREQ  # microseconds
+NUM_OF_STEPS_FOR_360 = 1000
+PWM_FREQ = 2500  # Hz
+DELAY = int(500000/PWM_FREQ)  # microseconds
 
 
 @unique
@@ -41,24 +41,20 @@ class Hand:
     # constrain the attributes
     __slots__ = ('status', 'side', 'pi', 'wave', 'wave_id')
 
-    def __init__(self, side: str, status: HandStatus = HandStatus.DeftHld):
+    def __init__(self, side: str, status: HandStatus = HandStatus.DeftRel):
         if isinstance(status, HandStatus) and side in ('left', 'right'):
             self.status = status
             self.side = side
 
             self.pi = pigpio.pi()
             if not self.pi.connected:
-                pass
-                # raise RuntimeError("Connect to pigpio failed!")
+                raise RuntimeError("Connect to pigpio failed!")
             self.pi.wave_clear()
-            self.pi.set_mode(HandL_ENA if side ==
-                             'left' else HandL_ENA, pigpio.OUTPUT)
-            self.pi.set_mode(HandL_DIR if side ==
-                             'left' else HandR_DIR, pigpio.OUTPUT)
-            self.wave = [pigpio.pulse(1 << HandL_PUL if side ==
-                                      'left' else HandR_PUL, 0, DELAY),
-                         pigpio.pulse(0, 1 << HandL_PUL if side ==
-                                      'left' else HandR_PUL, DELAY)]
+            self.pi.write(HandL_ENA, 0)
+            self.wave = [pigpio.pulse(1 << (HandL_PUL if side ==
+                                      'left' else HandR_PUL), 0, DELAY),
+                         pigpio.pulse(0, 1 << (HandL_PUL if side ==
+                                      'left' else HandR_PUL), DELAY)]
             self.pi.wave_add_generic(self.wave)
             self.wave_id = self.pi.wave_create()
             if self.wave_id >= 0:
@@ -92,8 +88,10 @@ class Hand:
         '''
         x = num_of_pulse & 255
         y = num_of_pulse >> 8
-        # loop x + y*256
+        # loop x + y*256 times
         chain = [255, 0, self.wave_id, 255, 1, x, y]
+        # infinite loop (for test):
+        # chain = [255, 0, self.wave_id, 255, 3]
         while self.pi.wave_tx_busy():
             time.sleep(0.1)
         self.pi.wave_chain(chain)
@@ -105,7 +103,8 @@ class Hand:
         '''
         num_of_pulse = int(angle * NUM_OF_STEPS_FOR_360/360)
         if 0 < angle < 360 and direct in (0, 1):
-            self.pi.write(HandL_DIR if self.side == "left" else HandR_DIR, direct)
+            self.pi.write(HandL_DIR if self.side ==
+                          "left" else HandR_DIR, direct)
             self._send_pulse(num_of_pulse)
         else:
             raise ValueError(f"Invalid angle {angle} or direction {direct}!")
@@ -133,13 +132,13 @@ class Hand:
     def TurnL90(self):
         v = [2, 3, 4, 5, 6, 7, 0, 1][self.status.value]
         self.status = Hand._value2key(v)
-        self._move(90, 0)
+        self._move(90, 1)
         return self
 
     def TurnR90(self):
         v = [6, 7, 0, 1, 2, 3, 4, 5][self.status.value]
         self.status = Hand._value2key(v)
-        self._move(90, 1)
+        self._move(90, 0)
         return self
 
     def Turn180(self):
@@ -148,7 +147,14 @@ class Hand:
         self._move(180, 0) if self.status.value % 2 else self._move(180, 1)
         return self
 
+    def __del__(self):
+        self.pi = pigpio.pi()
+        self.pi.wave_tx_stop()
+        self.pi.wave_clear()
+        self.pi.stop()
+
 
 if __name__ == '__main__':
     lhand = Hand(side='left')
     rhand = Hand(side='right')
+    print(lhand.status, rhand.status)

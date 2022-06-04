@@ -22,7 +22,7 @@ def color_detect(img) -> list:  # 利用训练好的module进行颜色检测
     for img_roi in img_rois:
         img2arr = img2vector(img_roi)
         preResult = clf.predict(img2arr)
-        preResults.append(preResult)
+        preResults.append(''.join(str(i) for i in list(preResult)))
     return preResults
 
 

@@ -8,14 +8,14 @@ def capture_one(cam_id: int):
     '''
     if cam_id in [0, 1, 2, 3]:
         os.system(f'fswebcam -d /dev/video{cam_id*2} --no-banner\
-            -q /home/pi/Documents/CuBiC/Vision/{cam_id}.jpg')
+            -q /home/pi/Documents/CuBiC/Vision/picture/{cam_id}.jpg')
         print(f'Camera {cam_id} capture done.')
     else:
         raise ValueError(f'Invalid Camera {cam_id}.')
 
 
 def capture_all():
-    '''Capture all the 4 images. Save to /home/pi/Documents/CuBiC/Vision/
+    '''Capture all the 4 images. Save to /home/pi/Documents/CuBiC/Vision/picture/
     '''
     for cam_id in range(4):
         capture_one(cam_id)

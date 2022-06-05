@@ -67,12 +67,14 @@ x52, y52 = 5, 6
 x53, y53 = 5, 6
 x54, y54 = 5, 6
 '''---------------------------------------------------------------------------------'''
-X = [x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19, x20, x21, x22, x23, x24, x25,
-     x26, x27, x28, x29, x30, x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45, x46, x47, x48,
-     x49, x50, x51, x52, x53, x54]  # 存储左上角坐标x值的矩阵
-Y = [y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15, y16, y17, y18, y19, y20, y21, y22, y23, y24, y25,
-     y26, y27, y28, y29, y30, y31, y32, y33, y34, y35, y36, y37, y38, y39, y40, y41, y42, y43, y44, y45, y46, y47, y48,
-     y49, y50, y51, y52, y53, y54]  # 存储左上角坐标y值的矩阵
+X = [x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15,
+     x16, x17, x18, x19, x20, x21, x22, x23, x24, x25, x26, x27, x28, x29, x30,
+     x31, x32, x33, x34, x35, x36, x37, x38, x39, x40, x41, x42, x43, x44, x45,
+     x46, x47, x48, x49, x50, x51, x52, x53, x54]  # 存储左上角坐标x值的矩阵
+Y = [y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14, y15,
+     y16, y17, y18, y19, y20, y21, y22, y23, y24, y25, y26, y27, y28, y29, y30,
+     y31, y32, y33, y34, y35, y36, y37, y38, y39, y40, y41, y42, y43, y44, y45,
+     y46, y47, y48, y49, y50, y51, y52, y53, y54]  # 存储左上角坐标y值的矩阵
 
 
 def cv2_show(name, a) -> None:
@@ -84,7 +86,7 @@ def cv2_show(name, a) -> None:
 
 def roi_extract(img_path) -> list:
     roi_s = []  # 用于储存提取的roi
-    for file in os.listdir(img_path):
+    for file in os.listdir(str(img_path)):
         file_path = os.path.join(img_path, file)
         img = cv2.imread(file_path)
         for x, y in zip(X, Y):
@@ -96,14 +98,9 @@ def roi_extract(img_path) -> list:
 
 if __name__ == '__main__':
     img_path = "./test"
-    for file in os.listdir(img_path):
-        filepath = os.path.join(img_path, file)
-        img = cv2.imread(filepath)
-        roi_s = roi_extract(img)
-        i = 1
-        for img_roi in roi_s:
-            roi = cv2.cvtColor(img_roi, cv2.COLOR_BGR2RGB)
-            plt.subplot(3, 6, i)
-            plt.imshow(img)
-            i += 1
-        plt.show()
+    roi_s = roi_extract(img_path)
+    for i, img_roi in enumerate(roi_s):
+        roi = cv2.cvtColor(img_roi, cv2.COLOR_BGR2RGB)
+        plt.subplot(3, 6, 18 if i >= 18 else i+1)
+        plt.imshow(img_roi)
+    plt.show()

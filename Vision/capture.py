@@ -3,7 +3,7 @@ import os
 
 def capture_one(cam_id: int):
     '''Capture one image using the specified camera.
-    Save to /home/pi/Documents/CuBiC/Vision/
+    Save to /home/pi/Documents/CuBiC/Vision/pictures/
     :param cam_id: Camera id. Can be only 0, 1, 2, or 3.
     '''
     if cam_id in [0, 1, 2, 3]:
@@ -15,11 +15,11 @@ def capture_one(cam_id: int):
 
 
 def capture_all():
-    '''Capture all the 4 images. Save to /home/pi/Documents/CuBiC/Vision/picture/
+    '''Capture all the 4 images. Save to /home/pi/Documents/CuBiC/Vision/pictures/
     '''
     for cam_id in range(4):
         capture_one(cam_id)
 
 
 if __name__ == '__main__':
-    capture_one(4)
+    capture_all()

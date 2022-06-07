@@ -88,6 +88,6 @@ if __name__ == "__main__":
     cubestring = 'DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL'
     if valid_cubestring(cubestring):
         res = sv.solve(cubestring, 30, 1)
-
-    print(valid_cubestring(cubestring))
-    print(solvestring_parser(res, True))
+        res = solvestring_parser(res)
+        oplist = to_oplist(res)
+    print(oplist)

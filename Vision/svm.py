@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import cv2
 from roi_extract import roi_extract
 
-model_path = './training_set/svm_cube.model'
+model_path = './svm_cube.model'
 clf = joblib.load(model_path)  # 加载模型
 
 

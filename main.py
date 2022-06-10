@@ -5,27 +5,62 @@ import Control.stp_control as sc
 
 
 def main(lhand, rhand, oplist):
+    '''
+    !!! WARNING: This function has NOT been tested yet.
+    '''
     for i in range(len(oplist)):
         if oplist[i] == 'L1':
+            if rhand.status == sc.HandStatus.LeftHld:
+                rhand.Release().TurnR90().Hold()
+            if rhand.status == sc.HandStatus.RighHld:
+                rhand.Release().TurnL90().Hold()
             lhand.TurnR90()
         if oplist[i] == 'L2':
+            if rhand.status == sc.HandStatus.LeftHld:
+                rhand.Release().TurnR90().Hold()
+            if rhand.status == sc.HandStatus.RighHld:
+                rhand.Release().TurnL90().Hold()
             lhand.Turn180()
         if oplist[i] == 'L3':
+            if rhand.status == sc.HandStatus.LeftHld:
+                rhand.Release().TurnR90().Hold()
+            if rhand.status == sc.HandStatus.RighHld:
+                rhand.Release().TurnL90().Hold()
             lhand.TurnL90()
         if oplist[i] == 'F1':
+            if lhand.status == sc.HandStatus.LeftHld:
+                lhand.Release().TurnR90().Hold()
+            if lhand.status == sc.HandStatus.RighHld:
+                lhand.Release().TurnL90().Hold()
             rhand.TurnR90()
         if oplist[i] == 'F2':
+            if lhand.status == sc.HandStatus.LeftHld:
+                lhand.Release().TurnR90().Hold()
+            if lhand.status == sc.HandStatus.RighHld:
+                lhand.Release().TurnL90().Hold()
             rhand.Turn180()
         if oplist[i] == 'F3':
+            if lhand.status == sc.HandStatus.LeftHld:
+                lhand.Release().TurnR90().Hold()
+            if lhand.status == sc.HandStatus.RighHld:
+                lhand.Release().TurnL90().Hold()
             rhand.TurnL90()
         if oplist[i] == 'LL':
-            lhand.Release().TurnR90()
+            rhand.Release()
+            lhand.TurnR90()
+            rhand.Hold()
         if oplist[i] == 'LL2':
-            lhand.Release().Turn180()
+            rhand.Release()
+            lhand.Turn180()
+            rhand.Hold()
         if oplist[i] == 'FF':
-            rhand.Release().TurnR90()
+            lhand.Release()
+            rhand.TurnR90()
+            lhand.Hold()
         if oplist[i] == 'FF2':
-            rhand.Release().Turn180()
+            lhand.Release()
+            rhand.Turn180()
+            lhand.Hold()
 
 
 if __name__ == '__main__':

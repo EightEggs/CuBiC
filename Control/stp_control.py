@@ -1,4 +1,3 @@
-from curses.ascii import DEL
 from enum import Enum, unique
 import time
 import pigpio
